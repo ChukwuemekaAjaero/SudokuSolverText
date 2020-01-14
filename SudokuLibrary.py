@@ -1,4 +1,5 @@
 import random
+import copy
 
 class Cell:
     def __init__(self, value = "", fixed = False, clicked = False):
@@ -14,7 +15,7 @@ class Cell:
 
 class Board:
     board = []
-    originalBoard = None
+    originalBoard = []
 
     def __init__(self, diffifulty = 1):
         if diffifulty == 1:
@@ -266,7 +267,7 @@ class Board:
         self.fillDiagonal()
         self.fillRemaining(0, 3)
         self.removeDigits()
-        self.originalBoard = self.board
+        self.originalBoard = copy.deepcopy(self.board)
 
     def fillDiagonal(self):
         for i in range(0,8,3):#Might need to change the step value
@@ -318,7 +319,6 @@ class Board:
                 self.board[row][column].value = '-'
                 self.board[row][column].fixed = False
 
-
     def fillSquare(self, row, column):
         for i in range(3):
             for j in range(3):
@@ -328,14 +328,16 @@ class Board:
                 self.board[row+i][column+j].value = val
                 self.board[row + i][column + j].fixed = True
 
-
-
     def addValue(self, row, column, value):
         '''Board, int, int, int -> Boolean'''
+
+        if row > 8 or row < 0 or column > 8 or column < 0 or value > 8 or value < 0:
+            return False
 
         if self.board[row][column].fixed == False:
             if(self.checkLocationSafe(row, column, value)):
                 self.board[row][column].value = value
+                self.emptyCells-=1
                 return True
             else:
                 return False
@@ -344,6 +346,16 @@ class Board:
 
     def removeValue(self, row, column):
         '''Board, int, int -> Boolean'''
+        if row > 8 or row < 0 or column > 8 or column < 0:
+            return False
+
+        if self.board[row][column].fixed == False:
+            self.board[row][column].value = '-'
+            self.emptyCells+=1
+            return True
+        else:
+            return False
+
 
     def isComplete(self):
         '''Board -> Boolean'''
