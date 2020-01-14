@@ -14,8 +14,16 @@ class Cell:
 
 class Board:
     board = []
-    def __init__(self, emptyCells = 40):
-        self.emptyCells = emptyCells
+    originalBoard = None
+
+    def __init__(self, diffifulty = 1):
+        if diffifulty == 1:
+            self.emptyCells = 20
+        elif diffifulty == 2:
+            self.emptyCells = 40
+        else:
+            self.emptyCells = 60
+
         for row in range(9):
             self.board.append([])
             for column in range(9):
@@ -32,6 +40,7 @@ class Board:
         '''Board -> None
         This method erases all the user inputs from the
         board'''
+        self.board = self.originalBoard
 
     def displayBoard(self):
         '''Board -> None
@@ -56,6 +65,33 @@ class Board:
                     print("  |", self.board[row][col], end="")
                 else:
                     print(" ", self.board[row][col], end="")
+                col += 1
+            print()
+            row += 1
+
+    def displayOriginalBoard(self):
+        '''Board -> None
+        This method displays the contents of the board'''
+        print("   ", end="")
+        col = 0
+        while col < len(self.originalBoard):
+            if(col == 3 or col == 6):
+                print('|', col, end = "  ")
+            else:
+                print(col, end="  ")
+            col += 1
+        print()
+        row = 0
+        while row < len(self.originalBoard):
+            if(row == 3 or row == 6):
+                print("---------------------------------")
+            print(row, end="")
+            col = 0
+            while col < len(self.originalBoard[row]):
+                if(col == 3 or col == 6):
+                    print("  |", self.originalBoard[row][col], end="")
+                else:
+                    print(" ", self.originalBoard[row][col], end="")
                 col += 1
             print()
             row += 1
@@ -165,7 +201,6 @@ class Board:
                     return True
         return False
 
-
     def usedInRow(self, row, val):
         '''Board, int, int -> Boolean
         This method scans a specified row on the board
@@ -213,7 +248,10 @@ class Board:
     def generateBoard(self, difficulty):
         '''Board, int -> None
         Precondition: difficulty is greater than or equal
-        to 2'''
+        to 2
+
+        Generated board isn't always valid. Keeping as a
+        point of reference'''
 
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
@@ -228,6 +266,7 @@ class Board:
         self.fillDiagonal()
         self.fillRemaining(0, 3)
         self.removeDigits()
+        self.originalBoard = self.board
 
     def fillDiagonal(self):
         for i in range(0,8,3):#Might need to change the step value
@@ -311,7 +350,7 @@ class Board:
 
         for i in range(len(self.board)):
             for j in range(len(self.board[0])):
-                if (self.board[i][j] == '-'):
+                if (self.board[i][j].value == '-'):
                     return False
         return True
 
