@@ -14,8 +14,9 @@ class Cell:
 
 class Board:
     board = []
-    emptyCells = 81
-    def __init__(self):
+    eC = 81
+    def __init__(self, emptyCells = 40):
+        self.emptyCells = emptyCells
         for row in range(9):
             self.board.append([])
             for column in range(9):
@@ -192,7 +193,7 @@ class Board:
         '''Board, int, int, int -> Boolean
         This method scans a specified square on the board
         and returns True if the specified value is in
-        that row and False otherwise'''
+        that square and False otherwise'''
 
         for i in range(3):
             for j in range(3):
@@ -219,11 +220,78 @@ class Board:
             for j in range(len(self.board[0])):
                 dif = random.randint(1, difficulty)
                 if (dif == 1):
-                    self.emptyCells -= 1
+                    self.eC -= 1
                     self.board[i][j].value = random.randint(1,9)
                     while not (self.checkRow(i) and self.checkColumn(j) and self.checkSquare(i, j)):
                         self.board[i][j].value = random.randint(1, 9)
                     self.board[i][j].fixed = True
+
+    def generateBoard2(self):
+        return
+
+    def fillValues(self):
+        self.fillDiagonal()
+        self.fillRemaining(0, 3)
+        self.removeDigits()
+
+    def fillDiagonal(self):
+        for i in range(0,8,3):#Might need to change the step value
+            self.fillSquare(i, i)
+
+    def fillRemaining(self, i, j):
+        N = len(self.board)
+        if j >= N and i<N-1:
+            i+=1
+            j = 0
+
+        if i>=N and j>=N:
+            return True
+
+        if i < 3:
+            if j < 3:
+                j = 3
+
+        elif i < N-3:
+            if j == ((int)(i/3))*3: #Play around with this do see if I can use // or just i
+                j+=3
+
+        else:
+            if j == N - 3:
+                i+=1
+                j=0
+                if i>=N:
+                    return True
+
+        for k in range(1, N+1):
+            if self.checkLocationSafe(i, j, k):
+                self.board[i][j].value = k
+                if self.fillRemaining(i, j+1):
+                    return True
+                self.board[i][j].value = '-'
+
+        return False
+
+    def removeDigits(self):
+        count = self.emptyCells
+        while count != 0:
+            row = random.randint(0,8)
+            column = random.randint(0,8)
+            if column != 0:
+                column+-1
+
+            if not self.board[row][column].value == '-':
+                count-=1
+                self.board[row][column].value = '-'
+
+    def fillSquare(self, row, column):
+        for i in range(3):
+            for j in range(3):
+                val = random.randint(1,9)
+                while self.usedInSquare(row, column, val):
+                    val = random.randint(1, 9)
+                self.board[row+i][column+j].value = val
+
+
 
     def addValue(self, row, column, value):
         '''Board, int, int, int -> Boolean'''
