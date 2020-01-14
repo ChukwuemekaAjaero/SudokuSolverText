@@ -14,7 +14,6 @@ class Cell:
 
 class Board:
     board = []
-    eC = 81
     def __init__(self, emptyCells = 40):
         self.emptyCells = emptyCells
         for row in range(9):
@@ -220,14 +219,10 @@ class Board:
             for j in range(len(self.board[0])):
                 dif = random.randint(1, difficulty)
                 if (dif == 1):
-                    self.eC -= 1
                     self.board[i][j].value = random.randint(1,9)
                     while not (self.checkRow(i) and self.checkColumn(j) and self.checkSquare(i, j)):
                         self.board[i][j].value = random.randint(1, 9)
                     self.board[i][j].fixed = True
-
-    def generateBoard2(self):
-        return
 
     def fillValues(self):
         self.fillDiagonal()
@@ -265,9 +260,11 @@ class Board:
         for k in range(1, N+1):
             if self.checkLocationSafe(i, j, k):
                 self.board[i][j].value = k
+                self.board[i][j].fixed = True
                 if self.fillRemaining(i, j+1):
                     return True
                 self.board[i][j].value = '-'
+                self.board[i][j].fixed = False
 
         return False
 
@@ -276,12 +273,12 @@ class Board:
         while count != 0:
             row = random.randint(0,8)
             column = random.randint(0,8)
-            if column != 0:
-                column+-1
 
             if not self.board[row][column].value == '-':
                 count-=1
                 self.board[row][column].value = '-'
+                self.board[row][column].fixed = False
+
 
     def fillSquare(self, row, column):
         for i in range(3):
@@ -290,11 +287,21 @@ class Board:
                 while self.usedInSquare(row, column, val):
                     val = random.randint(1, 9)
                 self.board[row+i][column+j].value = val
+                self.board[row + i][column + j].fixed = True
 
 
 
     def addValue(self, row, column, value):
         '''Board, int, int, int -> Boolean'''
+
+        if self.board[row][column].fixed == False:
+            if(self.checkLocationSafe(row, column, value)):
+                self.board[row][column].value = value
+                return True
+            else:
+                return False
+        return False
+
 
     def removeValue(self, row, column):
         '''Board, int, int -> Boolean'''

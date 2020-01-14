@@ -1,12 +1,12 @@
 from SudokuLibrary import *
 import random
 
-testBoard = Board()
+testBoard = Board(40)
 #testBoard.displayBoard()
 
 testBoard.fillValues()
 testBoard.displayBoard()
-print("\n*************************************\n")
-testBoard.solveBackTracking()
-testBoard.displayBoard()
-print(testBoard.emptyCells)
+#print("\n*************************************\n")
+#testBoard.solveBackTracking()
+#testBoard.displayBoard()
+
